@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <title>Лабораторна №4</title>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center mt-3" >
+            <h1>Лабораторна робота №4</h1>
+        </div>
+    </div>
+    <table class="table text-center mb-5">
+        <tr>
+            <td>Варіант</td>
+            <td>Сутність</td>
+            <td>Поля таблиці</td>
+            <td>Вибірка</td>
+            <td>Величина для обчислення</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Порода курей</td>
+            <td>id,назва породи, тип (яєчна, мясна, мясно-яєчна), яйценосність</td>
+            <td>Показати всі яєчні породи з несучістю понад 300 яєць</td>
+            <td>Середня яйценосність яєчних порід</td>
+        </tr>
+    </table>
+    <form action="/laba4/add" method="POST">
+        <h3>Заповнення даних</h3>
+        <div class="row text-center mt-2 mb-2">
+            <div class="col-md-4">
+                <input type="text" name="chickenName" class="form-control" placeholder="Назва породи" required>
+            </div>
+            <div class="col-md-4">
+                <select name="chickenEnum" class="custom-select" required>
+                    <option value="EGG">Яєчна</option>
+                    <option value="MEAT">Мясна</option>
+                    <option value="EGG_MEAT">Мясно-яєчна</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input type="number" name="eggCounter" class="form-control" placeholder="Яйценосність" required>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <button class="btn btn-primary float-right ml-2" type="submit">Додати запис</button>
+                <a class="btn btn-danger float-right" href="/">Повернутись до головного меню</a>
+            </div>
+        </div>
+    </form>
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <span class="float-right ml-2 mt-2" id="eggAvg"></span>
+            <button id="eggClick" class="btn btn-dark float-right ml-2">Показати обчислення</button>
+            <form action="/laba4/" method="GET">
+                <button type="submit" class="btn btn-dark float-right ml-2">Показати вибірку</button>
+                <input type="number"
+                       name="eggCounter"
+                       style="width: 100px"
+                       class="form-control float-right ml-2"
+                       placeholder=">300"
+                       required>
+            </form>
+        </div>
+    </div>
+    <h3>Дані БД</h3>
+    <table class="table text-center">
+        <tr>
+            <td>Назва породи</td>
+            <td>Тип</td>
+            <td>Яйценосність</td>
+        </tr>
+        <tr th:each="chicken : ${chickens}">
+            <td th:text="${chicken.getChickenName()}"></td>
+            <td th:switch="${chicken.getChickenType().toString()}">
+                <span th:case="'EGG'">Яєчна</span>
+                <span th:case="'MEAT'">Мясна</span>
+                <span th:case="'EGG_MEAT'">Мясно-яєчна</span>
+            </td>
+            <td th:text="${chicken.getEggCounter()}"></td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $('#eggClick').click(function () {
+        $.ajax({url: "/laba4/getEggAvg", success: function(result){
+                $("#eggAvg").html('Результат: ' + result);
+        }})
+    })
+</script>
+</body>
+</html>
